@@ -398,7 +398,7 @@ STATIC mp_obj_t st7789_ST7789_init(mp_obj_t self_in) {
     uint8_t PWCTR1_param[1]={0x23};
     uint8_t PWCTR2_param[1]={0x10};
     uint8_t VMCTR2_param[1]={0x86};
-    uint8_t MADCTL_param[1]={0x88};
+    uint8_t MADCTL_param[1]={0x48};
     uint8_t VSCRSADD_param[1]={0x00};
     uint8_t PIXFMT_param[1]={0x55};
     uint8_t ENABLE3G_param[1]={0x00};
