@@ -385,29 +385,29 @@ STATIC mp_obj_t st7789_ST7789_init(mp_obj_t self_in) {
     st7789_ST7789_obj_t *self = MP_OBJ_TO_PTR(self_in);
     st7789_ST7789_hard_reset(self_in);
     st7789_ST7789_soft_reset(self_in);
-    write_cmd(self, PWCTRB, {0x00, 0xC1, 0x30}, 3)  // Pwr ctrl B
-    write_cmd(self, POSC, {0x64, 0x03, 0x12, 0x81}, 4)  // Pwr on seq. ctrl
-    write_cmd(self, DTCA, {0x85, 0x00, 0x78}, 3)  // Driver timing ctrl A
-    write_cmd(self, PWCTRA, {0x39, 0x2C, 0x00, 0x34, 0x02}, 5)  // Pwr ctrl A
-    write_cmd(self, PUMPRC, 0x20, 1)  // Pump ratio control
-    write_cmd(self, DTCB, {0x00, 0x00}, 2)  // Driver timing ctrl B
-    write_cmd(self, PWCTR1, 0x23, 1)  // Pwr ctrl 1
-    write_cmd(self, PWCTR2, 0x10, 1)  // Pwr ctrl 2
-    write_cmd(self, VMCTR1, {0x3E, 0x28}, 2)  // VCOM ctrl 1
-    write_cmd(self, VMCTR2, 0x86, 1)  // VCOM ctrl 2
-    write_cmd(self, MADCTL, 0x88, 1)  // Memory access ctrl
-    write_cmd(self, VSCRSADD, 0x00, 1)  // Vertical scrolling start address
-    write_cmd(self, PIXFMT, 0x55, 1)  // COLMOD: Pixel format
-    write_cmd(self, FRMCTR1, {0x00, 0x18}, 2)  // Frame rate ctrl
-    write_cmd(self, DFUNCTR, {0x08, 0x82, 0x27}, 3)
-    write_cmd(self, ENABLE3G, 0x00, 1)  // Enable 3 gamma ctrl
-    write_cmd(self, GAMMASET, 0x01, 1)  // Gamma curve selected
+    write_cmd(self, PWCTRB, {0x00, 0xC1, 0x30}, 3);  // Pwr ctrl B
+    write_cmd(self, POSC, {0x64, 0x03, 0x12, 0x81}, 4);  // Pwr on seq. ctrl
+    write_cmd(self, DTCA, {0x85, 0x00, 0x78}, 3);  // Driver timing ctrl A
+    write_cmd(self, PWCTRA, {0x39, 0x2C, 0x00, 0x34, 0x02}, 5);  // Pwr ctrl A
+    write_cmd(self, PUMPRC, 0x20, 1);  // Pump ratio control
+    write_cmd(self, DTCB, {0x00, 0x00}, 2);  // Driver timing ctrl B
+    write_cmd(self, PWCTR1, 0x23, 1);  // Pwr ctrl 1
+    write_cmd(self, PWCTR2, 0x10, 1);  // Pwr ctrl 2
+    write_cmd(self, VMCTR1, {0x3E, 0x28}, 2);  // VCOM ctrl 1
+    write_cmd(self, VMCTR2, 0x86, 1);  // VCOM ctrl 2
+    write_cmd(self, MADCTL, 0x88, 1);  // Memory access ctrl
+    write_cmd(self, VSCRSADD, 0x00, 1);  // Vertical scrolling start address
+    write_cmd(self, PIXFMT, 0x55, 1);  // COLMOD: Pixel format
+    write_cmd(self, FRMCTR1, {0x00, 0x18}, 2);  // Frame rate ctrl
+    write_cmd(self, DFUNCTR, {0x08, 0x82, 0x27}, 3);
+    write_cmd(self, ENABLE3G, 0x00, 1);  // Enable 3 gamma ctrl
+    write_cmd(self, GAMMASET, 0x01, 1);  // Gamma curve selected
     write_cmd(self, GMCTRP1, {0x0F, 0x31, 0x2B, 0x0C, 0x0E, 0x08, 0x4E,
-                   0xF1, 0x37, 0x07, 0x10, 0x03, 0x0E, 0x09, 0x00}, 15)
+                   0xF1, 0x37, 0x07, 0x10, 0x03, 0x0E, 0x09, 0x00}, 15);
     write_cmd(self, GMCTRN1, {0x00, 0x0E, 0x14, 0x03, 0x11, 0x07, 0x31,
-                   0xC1, 0x48, 0x08, 0x0F, 0x0C, 0x31, 0x36, 0x0F}, 15)
-    write_cmd(self, SLPOUT, NULL, 0)  // Exit sleep
-    sleep(.1)
+                   0xC1, 0x48, 0x08, 0x0F, 0x0C, 0x31, 0x36, 0x0F}, 15);
+    write_cmd(self, SLPOUT, NULL, 0);  // Exit sleep
+
 
     const mp_obj_t args[] = {
         self_in,
