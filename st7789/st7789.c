@@ -61,8 +61,8 @@ typedef struct _st7789_ST7789_obj_t {
     mp_obj_base_t base;
 
     mp_obj_base_t *spi_obj;
-    uint8_t width;
-    uint8_t height;
+     uint16_t width;
+     uint16_t height;
     mp_hal_pin_obj_t reset;
     mp_hal_pin_obj_t dc;
     mp_hal_pin_obj_t cs;
@@ -98,15 +98,15 @@ STATIC void write_cmd(st7789_ST7789_obj_t *self, uint8_t cmd, const uint8_t *dat
     CS_HIGH()
 }
 
-STATIC void set_window(st7789_ST7789_obj_t *self, uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1) {
+STATIC void set_window(st7789_ST7789_obj_t *self,  uint16_t x0,  uint16_t y0,  uint16_t x1,  uint16_t y1) {
     if (x0 > x1 || x1 >= self->width) {
         return;
     }
     if (y0 > y1 || y1 >= self->height) {
         return;
     }
-    uint8_t bufx[4] = {x0 >> 8, x0 & 0xFF, x1 >> 8, x1 & 0xFF};
-    uint8_t bufy[4] = {y0 >> 8, y0 & 0xFF, y1 >> 8, y1 & 0xFF};
+    uint8_t bufx[4] = {x0 >> 8, x0, x1 >> 8, x1};
+    uint8_t bufy[4] = {y0 >> 8, y0, y1 >> 8, y1};
     write_cmd(self, SET_COLUMN, bufx, 4);
     write_cmd(self, SET_PAGE, bufy, 4);
     write_cmd(self, WRITE_RAM, NULL, 0);
@@ -136,7 +136,7 @@ STATIC void fill_color_buffer(mp_obj_base_t* spi_obj, uint16_t color, int length
 }
 
 
-STATIC void draw_pixel(st7789_ST7789_obj_t *self, uint8_t x, uint8_t y, uint16_t color) {
+STATIC void draw_pixel(st7789_ST7789_obj_t *self, uint16_t x, uint16_t y, uint16_t color) {
     uint8_t hi = color >> 8, lo = color;
     set_window(self, x, y, x, y);
     DC_HIGH();
@@ -147,7 +147,7 @@ STATIC void draw_pixel(st7789_ST7789_obj_t *self, uint8_t x, uint8_t y, uint16_t
 }
 
 
-STATIC void fast_hline(st7789_ST7789_obj_t *self, uint8_t x, uint8_t y, uint16_t w, uint16_t color) {
+STATIC void fast_hline(st7789_ST7789_obj_t *self,  uint16_t x,  uint16_t y, uint16_t w, uint16_t color) {
     set_window(self, x, y, x + w - 1, y);
     DC_HIGH();
     CS_LOW();
@@ -156,7 +156,7 @@ STATIC void fast_hline(st7789_ST7789_obj_t *self, uint8_t x, uint8_t y, uint16_t
 }
 
 
-STATIC void fast_vline(st7789_ST7789_obj_t *self, uint8_t x, uint8_t y, uint16_t w, uint16_t color) {
+STATIC void fast_vline(st7789_ST7789_obj_t *self,  uint16_t x,  uint16_t y, uint16_t w, uint16_t color) {
     set_window(self, x, y, x, y + w - 1);
     DC_HIGH();
     CS_LOW();
@@ -182,7 +182,7 @@ STATIC mp_obj_t st7789_ST7789_hard_reset(mp_obj_t self_in) {
 STATIC mp_obj_t st7789_ST7789_soft_reset(mp_obj_t self_in) {
     st7789_ST7789_obj_t *self = MP_OBJ_TO_PTR(self_in);
 
-    write_cmd(self, ST7789_SWRESET, NULL, 0);
+    write_cmd(self, SWRESET, NULL, 0);
     mp_hal_delay_ms(150);
     return mp_const_none;
 }
@@ -210,9 +210,9 @@ MP_DEFINE_CONST_FUN_OBJ_1(st7789_ST7789_soft_reset_obj, st7789_ST7789_soft_reset
 STATIC mp_obj_t st7789_ST7789_sleep_mode(mp_obj_t self_in, mp_obj_t value) {
     st7789_ST7789_obj_t *self = MP_OBJ_TO_PTR(self_in);
     if(mp_obj_is_true(value)) {
-        write_cmd(self, ST7789_SLPIN, NULL, 0);
+        write_cmd(self, SLPIN, NULL, 0);
     } else {
-        write_cmd(self, ST7789_SLPOUT, NULL, 0);
+        write_cmd(self, SLPOUT, NULL, 0);
     }
     return mp_const_none;
 }
@@ -235,9 +235,9 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(st7789_ST7789_set_window_obj, 5, 5, s
 STATIC mp_obj_t st7789_ST7789_inversion_mode(mp_obj_t self_in, mp_obj_t value) {
     st7789_ST7789_obj_t *self = MP_OBJ_TO_PTR(self_in);
     if(mp_obj_is_true(value)) {
-        write_cmd(self, ST7789_INVON, NULL, 0);
+        write_cmd(self, INVON, NULL, 0);
     } else {
-        write_cmd(self, ST7789_INVOFF, NULL, 0);
+        write_cmd(self, INVOFF, NULL, 0);
     }
     return mp_const_none;
 }
