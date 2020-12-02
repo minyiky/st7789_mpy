@@ -63,8 +63,6 @@ typedef struct _st7789_ST7789_obj_t {
     mp_obj_base_t *spi_obj;
     uint8_t width;
     uint8_t height;
-    uint8_t xstart;
-    uint8_t ystart;
     mp_hal_pin_obj_t reset;
     mp_hal_pin_obj_t dc;
     mp_hal_pin_obj_t cs;
@@ -546,7 +544,7 @@ mp_obj_t st7789_ST7789_make_new(const mp_obj_type_t *type,
                                 const mp_obj_t *all_args ) {
     enum {
         ARG_spi, ARG_width, ARG_height, ARG_reset, ARG_dc, ARG_cs,
-        ARG_backlight, ARG_xstart, ARG_ystart
+        ARG_backlight
     };
     static const mp_arg_t allowed_args[] = {
         { MP_QSTR_spi, MP_ARG_OBJ | MP_ARG_REQUIRED, {.u_obj = MP_OBJ_NULL} },
@@ -556,8 +554,6 @@ mp_obj_t st7789_ST7789_make_new(const mp_obj_type_t *type,
         { MP_QSTR_dc, MP_ARG_KW_ONLY | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
         { MP_QSTR_cs, MP_ARG_KW_ONLY | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
         { MP_QSTR_backlight, MP_ARG_KW_ONLY | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
-        { MP_QSTR_xstart, MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = -1} },
-        { MP_QSTR_ystart, MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = -1} },
     };
     mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
     mp_arg_parse_all_kw_array(n_args, n_kw, all_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
@@ -571,19 +567,6 @@ mp_obj_t st7789_ST7789_make_new(const mp_obj_type_t *type,
     self->spi_obj = spi_obj;
     self->width = args[ARG_width].u_int;
     self->height = args[ARG_height].u_int;
-
-    if (args[ARG_xstart].u_int >= 0 && args[ARG_ystart].u_int >= 0) {
-        self->xstart = args[ARG_xstart].u_int;
-        self->ystart = args[ARG_ystart].u_int;
-    } else if (self->width == 240 && self->height == 240) {
-        self->xstart = ST7789_240x240_XSTART;
-        self->ystart = ST7789_240x240_YSTART;
-    } else if (self->width == 135 && self->height == 240) {
-        self->xstart = ST7789_135x240_XSTART;
-        self->ystart = ST7789_135x240_YSTART;
-    } else {
-        mp_raise_ValueError(MP_ERROR_TEXT("Unsupported display. Only 240x240 and 135x240 are supported without xstart and ystart provided"));
-    }
 
     if (args[ARG_reset].u_obj == MP_OBJ_NULL
         || args[ARG_dc].u_obj == MP_OBJ_NULL) {
