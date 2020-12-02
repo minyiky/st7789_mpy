@@ -30,7 +30,7 @@
 #include "py/mphal.h"
 #include "extmod/machine_spi.h"
 
-#include "ili9341_new.h"
+#include "st7789.h"
 
 // allow compiling against MP <=1.12
 #ifndef MP_ERROR_TEXT
