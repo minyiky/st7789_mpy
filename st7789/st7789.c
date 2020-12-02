@@ -435,7 +435,7 @@ STATIC mp_obj_t st7789_ST7789_init(mp_obj_t self_in) {
         mp_obj_new_int(BLACK)
     };
     st7789_ST7789_fill_rect(6, args);
-    write_cmd(self, ST7789_DISPON, NULL, 0);
+    write_cmd(self, DISPLAY_ON, NULL, 0);
     mp_hal_delay_ms(100);
 
     return mp_const_none;
