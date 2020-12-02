@@ -30,7 +30,7 @@
 #include "py/mphal.h"
 #include "extmod/machine_spi.h"
 
-#include "st7789.h"
+#include "ili9341_new.h"
 
 // allow compiling against MP <=1.12
 #ifndef MP_ERROR_TEXT
@@ -107,11 +107,11 @@ STATIC void set_window(st7789_ST7789_obj_t *self, uint8_t x0, uint8_t y0, uint8_
     if (y0 > y1 || y1 >= self->height) {
         return;
     }
-    uint8_t bufx[4] = {(x0+self->xstart) >> 8, (x0+self->xstart) & 0xFF, (x1+self->xstart) >> 8, (x1+self->xstart) & 0xFF};
-    uint8_t bufy[4] = {(y0+self->ystart) >> 8, (y0+self->ystart) & 0xFF, (y1+self->ystart) >> 8, (y1+self->ystart) & 0xFF};
-    write_cmd(self, ST7789_CASET, bufx, 4);
-    write_cmd(self, ST7789_RASET, bufy, 4);
-    write_cmd(self, ST7789_RAMWR, NULL, 0);
+    uint8_t bufx[4] = {x0 >> 8, x0 & 0xFF, x1 >> 8, x1 & 0xFF};
+    uint8_t bufy[4] = {y0 >> 8, y0 & 0xFF, y1 >> 8, y1 & 0xFF};
+    write_cmd(self, SET_COLUMN, bufx, 4);
+    write_cmd(self, SET_PAGE, bufy, 4);
+    write_cmd(self, WRITE_RAM, NULL, 0);
 }
 
 STATIC void fill_color_buffer(mp_obj_base_t* spi_obj, uint16_t color, int length) {
@@ -385,18 +385,29 @@ STATIC mp_obj_t st7789_ST7789_init(mp_obj_t self_in) {
     st7789_ST7789_obj_t *self = MP_OBJ_TO_PTR(self_in);
     st7789_ST7789_hard_reset(self_in);
     st7789_ST7789_soft_reset(self_in);
-    write_cmd(self, ST7789_SLPOUT, NULL, 0);
-
-    const uint8_t color_mode[] = { COLOR_MODE_65K | COLOR_MODE_16BIT};
-    write_cmd(self, ST7789_COLMOD, color_mode, 1);
-    mp_hal_delay_ms(10);
-    const uint8_t madctl[] = { ST7789_MADCTL_ML | ST7789_MADCTL_RGB };
-    write_cmd(self, ST7789_MADCTL, madctl, 1);
-
-    write_cmd(self, ST7789_INVON, NULL, 0);
-    mp_hal_delay_ms(10);
-    write_cmd(self, ST7789_NORON, NULL, 0);
-    mp_hal_delay_ms(10);
+    write_cmd(self, PWCTRB, {0x00, 0xC1, 0x30}, 3)  // Pwr ctrl B
+    write_cmd(self, POSC, {0x64, 0x03, 0x12, 0x81}, 4)  // Pwr on seq. ctrl
+    write_cmd(self, DTCA, {0x85, 0x00, 0x78}, 3)  // Driver timing ctrl A
+    write_cmd(self, PWCTRA, {0x39, 0x2C, 0x00, 0x34, 0x02}, 5)  // Pwr ctrl A
+    write_cmd(self, PUMPRC, 0x20, 1)  // Pump ratio control
+    write_cmd(self, DTCB, {0x00, 0x00}, 2)  // Driver timing ctrl B
+    write_cmd(self, PWCTR1, 0x23, 1)  // Pwr ctrl 1
+    write_cmd(self, PWCTR2, 0x10, 1)  // Pwr ctrl 2
+    write_cmd(self, VMCTR1, {0x3E, 0x28}, 2)  // VCOM ctrl 1
+    write_cmd(self, VMCTR2, 0x86, 1)  // VCOM ctrl 2
+    write_cmd(self, MADCTL, 0x88, 1)  // Memory access ctrl
+    write_cmd(self, VSCRSADD, 0x00, 1)  // Vertical scrolling start address
+    write_cmd(self, PIXFMT, 0x55, 1)  // COLMOD: Pixel format
+    write_cmd(self, FRMCTR1, {0x00, 0x18}, 2)  // Frame rate ctrl
+    write_cmd(self, DFUNCTR, {0x08, 0x82, 0x27}, 3)
+    write_cmd(self, ENABLE3G, 0x00, 1)  // Enable 3 gamma ctrl
+    write_cmd(self, GAMMASET, 0x01, 1)  // Gamma curve selected
+    write_cmd(self, GMCTRP1, {0x0F, 0x31, 0x2B, 0x0C, 0x0E, 0x08, 0x4E,
+                   0xF1, 0x37, 0x07, 0x10, 0x03, 0x0E, 0x09, 0x00}, 15)
+    write_cmd(self, GMCTRN1, {0x00, 0x0E, 0x14, 0x03, 0x11, 0x07, 0x31,
+                   0xC1, 0x48, 0x08, 0x0F, 0x0C, 0x31, 0x36, 0x0F}, 15)
+    write_cmd(self, SLPOUT, NULL, 0)  // Exit sleep
+    sleep(.1)
 
     const mp_obj_t args[] = {
         self_in,
