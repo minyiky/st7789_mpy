@@ -58,6 +58,7 @@ extern "C" {
 #define DTCA        0xE8  // Driver timing control A
 #define DTCB        0xEA  // Driver timing control B
 #define POSC        0xED  // Power on sequence control
+#define UNKNOWN     0xEF  // Uknown but apperently neccessary command
 #define ENABLE3G    0xF2  // Enable 3 gamma control
 #define PUMPRC      0xF7  // Pump ratio control
 

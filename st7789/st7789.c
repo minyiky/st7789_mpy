@@ -383,6 +383,7 @@ STATIC mp_obj_t st7789_ST7789_init(mp_obj_t self_in) {
     st7789_ST7789_obj_t *self = MP_OBJ_TO_PTR(self_in);
     st7789_ST7789_hard_reset(self_in);
     st7789_ST7789_soft_reset(self_in);
+    uint8_t UNKNOWN_param[3]={0x03,0x80,0x02};
     uint8_t PWCTRB_param[3]={0x00,0xC1,0x30};
     uint8_t POSC_param[4]={0x64,0x03,0x12,0x81};
     uint8_t DTCA_param[3]={0x85,0x00,0x78};
@@ -403,6 +404,7 @@ STATIC mp_obj_t st7789_ST7789_init(mp_obj_t self_in) {
     uint8_t ENABLE3G_param[1]={0x00};
     uint8_t GAMMASET_param[1]={0x01};
 
+    write_cmd(self, UNKNOWN, UNKNOWN_param , 3); // Pwr ctrl B
     write_cmd(self, PWCTRB, PWCTRB_param , 3); // Pwr ctrl B
     write_cmd(self, POSC, POSC_param , 4); // Pwr on seq. ctrl
     write_cmd(self, DTCA, DTCA_param , 3); // Driver timing ctrl A
