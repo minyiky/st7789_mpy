@@ -490,30 +490,30 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(st7789_ST7789_vline_obj, 5, 5, st7789
 
 STATIC mp_obj_t st7789_ST7789_fill_circle_c(size_t n_args, const mp_obj_t *args) {
     st7789_ST7789_obj_t *self = MP_OBJ_TO_PTR(args[0]);
-    mp_int_t x = mp_obj_get_int(args[1]);
-    mp_int_t y = mp_obj_get_int(args[2]);
+    mp_int_t x0 = mp_obj_get_int(args[1]);
+    mp_int_t y0 = mp_obj_get_int(args[2]);
     mp_int_t r = mp_obj_get_int(args[3]);
     mp_int_t color = mp_obj_get_int(args[4]);
 
-    mp_int_t f = 1 - r
-    mp_int_t dx = 1
-    mp_int_t dy = -r - r
-    mp_int_t x = 0
-    mp_int_t y = r
-    fast_vline(self, x0, y0 - r, 2 * r + 1, color)
+    mp_int_t f = 1 - r;
+    mp_int_t dx = 1;
+    mp_int_t dy = -r - r;
+    mp_int_t x = 0;
+    mp_int_t y = r;
+    fast_vline(self, x0, y0 - r, 2 * r + 1, color);
     while (x < y){
         if (f >= 0){
-            y -= 1
-            dy += 2
-            f += dy
+            y -= 1;
+            dy += 2;
+            f += dy;
         }
-        x += 1
-        dx += 2
-        f += dx
-        fast_vline(self, x0 + x, y0 - y, 2 * y + 1, color)
-        fast_vline(self, x0 - x, y0 - y, 2 * y + 1, color)
-        fast_vline(self, x0 - y, y0 - x, 2 * x + 1, color)
-        fast_vline(self, x0 + y, y0 - x, 2 * x + 1, color)
+        x += 1;
+        dx += 2;
+        f += dx;
+        fast_vline(self, x0 + x, y0 - y, 2 * y + 1, color);
+        fast_vline(self, x0 - x, y0 - y, 2 * y + 1, color);
+        fast_vline(self, x0 - y, y0 - x, 2 * x + 1, color);
+        fast_vline(self, x0 + y, y0 - x, 2 * x + 1, color);
     }
     return mp_const_none;
 }
